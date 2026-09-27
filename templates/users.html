@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}
+Discover People | ConnectHub
+{% endblock %}
+
+{% block content %}
+
+<div class="users-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="users-header">
+
+        <h1>
+            Discover People 👥
+        </h1>
+
+        <p>
+            Find people and connect with them on ConnectHub.
+        </p>
+
+    </div>
+
+
+    <!-- USERS GRID -->
+
+    <div class="users-grid">
+
+        {% for person in users %}
+
+        <div class="user-card">
+
+            <!-- PROFILE PHOTO -->
+
+            <div class="discover-avatar">
+
+                {% if person["profile_image"] %}
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/' + person['profile_image']
+                        ) }}"
+                        alt="Profile Photo"
+                    >
+
+                {% else %}
+
+                    👨🏻‍💻
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- USER NAME -->
+
+            <h2>
+
+                <a
+                    href="/user/{{ person['id'] }}"
+                    class="discover-user-link"
+                >
+                    {{ person["name"] }}
+                </a>
+
+            </h2>
+
+
+            <!-- USERNAME -->
+
+            <p class="discover-username">
+                @{{ person["username"] }}
+            </p>
+
+
+            <!-- BIO -->
+
+            <p class="discover-bio">
+
+                {% if person["bio"] %}
+
+                    {{ person["bio"] }}
+
+                {% else %}
+
+                    No bio added yet.
+
+                {% endif %}
+
+            </p>
+
+
+            <!-- FOLLOW BUTTON -->
+
+            {% if person["id"] != session["user_id"] %}
+
+                {% if person["id"] in following_ids %}
+
+                    <form
+                        action="/follow/{{ person['id'] }}"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="unfollow-button"
+                        >
+                            ✓ Following
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <form
+                        action="/follow/{{ person['id'] }}"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="follow-button"
+                        >
+                            + Follow
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            {% else %}
+
+                <div class="your-profile-label">
+                    👤 You
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- NO USERS -->
+
+    {% if not users %}
+
+    <div class="empty-profile-posts">
+
+        <div class="empty-post-icon">
+            👥
+        </div>
+
+        <h2>
+            No users found
+        </h2>
+
+        <p>
+            There are no other users on ConnectHub yet.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,520 @@
+{% extends "base.html" %}
+
+{% block title %}Home | ConnectHub{% endblock %}
+
+{% block content %}
+
+<div class="page-layout">
+
+    <!-- LEFT SIDEBAR -->
+
+    <aside class="left-sidebar">
+
+        <div class="mini-profile">
+
+            <div class="profile-photo purple">
+                👨🏻‍💻
+            </div>
+
+            <div>
+                <h3>{{ session.get("name", "User") }}</h3>
+                <p>@{{ session.get("username", "user") }}</p>
+            </div>
+
+        </div>
+
+        <nav class="side-menu">
+
+            <a href="/" class="active">
+                <span>🏠</span>
+                Home
+            </a>
+
+            <a href="/profile">
+                <span>👤</span>
+                My Profile
+            </a>
+
+            <a href="/users">
+                <span>👥</span>
+                Discover People
+            </a>
+
+            <a href="/create-post">
+                <span>➕</span>
+                Create Post
+            </a>
+<a href="/notifications">
+    <span>🔔</span>
+    Notifications
+
+    {% if unread_notifications and unread_notifications > 0 %}
+        <b class="notification-count">
+            {{ unread_notifications }}
+        </b>
+    {% endif %}
+</a>
+
+            <a href="/logout">
+                <span>🚪</span>
+                Logout
+            </a>
+
+        </nav>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-info">
+            <p>ConnectHub</p>
+
+            <span>
+                Connect with people and share your world.
+            </span>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN FEED -->
+
+    <section class="main-feed">
+
+
+        <!-- CREATE POST -->
+
+        <div class="composer-card">
+
+            <div class="profile-photo small purple">
+                👨🏻‍💻
+            </div>
+
+            <a
+                href="/create-post"
+                class="composer-input"
+            >
+                What's happening, {{ session.get("name", "User") }}?
+            </a>
+
+            <a
+                href="/create-post"
+                class="composer-button"
+            >
+                Create Post
+            </a>
+
+        </div>
+
+
+        <!-- FEED HEADING -->
+
+        <div class="feed-heading">
+
+            <h1>Your Feed</h1>
+
+            <p>
+                See what's happening around you.
+            </p>
+
+        </div>
+
+
+        <!-- POSTS -->
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+            <article
+                class="modern-post"
+                id="post-{{ post['id'] }}"
+            >
+
+
+                <!-- POST HEADER -->
+
+                <div class="post-top">
+
+                    <div class="post-author">
+
+                        <div class="profile-photo purple">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                {{ post["name"] }}
+                            </h3>
+
+                            <p>
+                                @{{ post["username"] }}
+                                ·
+                                {{ post["created_at"] }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="more-button"
+                        type="button"
+                    >
+                        ⋯
+                    </button>
+
+                </div>
+
+
+               <!-- POST CONTENT -->
+
+<div class="post-text">
+
+    <p>
+        {{ post["content"] }}
+    </p>
+
+{% if post["image"] %}
+    <div class="post-image">
+        <a
+            href="{{ url_for('static', filename='images/' + post['image']) }}"
+            target="_blank"
+        >
+            <img
+                src="{{ url_for('static', filename='images/' + post['image']) }}"
+                alt="Post Image"
+            >
+        </a>
+    </div>
+{% endif %}
+
+</div>
+
+
+                <!-- POST INFORMATION -->
+
+                <div class="post-info">
+
+                    <span>
+                        ❤️ {{ post["like_count"] }} Likes
+                    </span>
+
+                    <span>
+                        💬 {{ post["comment_count"] }} Comments
+                    </span>
+
+                    <span>
+                        ↗ Share
+                    </span>
+
+                </div>
+
+
+                <!-- ACTION BUTTONS -->
+<div class="post-actions">
+
+    <!-- LIKE -->
+    <form
+        action="/like/{{ post['id'] }}"
+        method="POST"
+        class="like-form"
+    >
+        <button type="submit">
+            ❤️ <span>Like</span>
+        </button>
+    </form>
+
+
+    <!-- COMMENT -->
+    <details class="comment-details">
+
+        <summary>
+            💬 <span>Comment</span>
+        </summary>
+
+        <div class="comments-section">
+
+            {% if post["comments"] %}
+
+                <div class="comments-list">
+
+                    {% for comment in post["comments"] %}
+
+                    <div class="single-comment">
+
+                        <div class="profile-photo tiny purple">
+                            👤
+                        </div>
+
+                        <div class="comment-content">
+
+                            <div class="comment-user">
+
+                                <strong>
+                                    {{ comment["name"] }}
+                                </strong>
+
+                                <span>
+                                    @{{ comment["username"] }}
+                                </span>
+
+                            </div>
+
+                            <p>
+                                {{ comment["content"] }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="no-comments">
+                    No comments yet. Be the first to comment!
+                </div>
+
+            {% endif %}
+
+
+            <!-- WRITE COMMENT -->
+
+            <form
+                action="/comment/{{ post['id'] }}"
+                method="POST"
+                class="comment-box"
+            >
+
+                <div class="profile-photo tiny purple">
+                    👨🏻‍💻
+                </div>
+
+                <input
+                    type="text"
+                    name="content"
+                    placeholder="Write a comment..."
+                    required
+                >
+
+                <button type="submit">
+                    Send
+                </button>
+
+            </form>
+
+        </div>
+
+    </details>
+
+
+    <!-- SHARE -->
+
+    <button
+        type="button"
+        onclick="sharePost({{ post['id'] }})"
+    >
+        ↗ <span>Share</span>
+    </button>
+
+
+    <!-- SAVE -->
+
+    <form
+        action="/save/{{ post['id'] }}"
+        method="POST"
+        class="save-form"
+    >
+        <button type="submit">
+            🔖 <span>Save</span>
+        </button>
+    </form>
+
+</div>
+
+
+
+<!-- COMMENTS -->
+
+<div class="comments-section">
+
+    {% if post["comments"] %}
+
+    <div class="comments-list">
+
+        {% for comment in post["comments"] %}
+
+        <div class="single-comment">
+
+            <div class="profile-photo tiny purple">
+                👤
+            </div>
+
+            <div class="comment-content">
+
+                <div class="comment-user">
+
+                    <strong>
+                        {{ comment["name"] }}
+                    </strong>
+
+                    <span>
+                        @{{ comment["username"] }}
+                    </span>
+
+                </div>
+
+                <p>
+                    {{ comment["content"] }}
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="no-comments">
+        No comments yet. Be the first to comment!
+    </div>
+
+    {% endif %}
+
+
+    <!-- ADD COMMENT -->
+
+    <form
+        action="/comment/{{ post['id'] }}"
+        method="POST"
+        class="comment-box"
+    >
+
+        <div class="profile-photo tiny purple">
+            👨🏻‍💻
+        </div>
+
+        <input
+            type="text"
+            name="content"
+            placeholder="Write a comment..."
+            required
+        >
+
+        <button type="submit">
+            Send
+        </button>
+
+    </form>
+
+</div>
+
+
+                <!-- COMMENT FORM -->
+
+                <form
+                    action="/comment/{{ post['id'] }}"
+                    method="POST"
+                    class="comment-box"
+                >
+
+                    <div class="profile-photo tiny purple">
+                        👨🏻‍💻
+                    </div>
+
+                    <input
+                        type="text"
+                        name="content"
+                        placeholder="Write a comment..."
+                        required
+                    >
+
+                    <button type="submit">
+                        Send
+                    </button>
+
+                </form>
+
+
+            </article>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <!-- EMPTY FEED -->
+
+            <div class="modern-post no-posts">
+
+                <div class="empty-feed-icon">
+                    📝
+                </div>
+
+                <h2>
+                    Your feed is empty
+                </h2>
+
+                <p>
+                    Be the first person to share something
+                    with the ConnectHub community.
+                </p>
+
+                <a
+                    href="/create-post"
+                    class="composer-button"
+                >
+                    Create Your First Post
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+<script>
+function toggleComments(button) {
+
+    const post = button.closest(".modern-post");
+
+    if (!post) {
+        return;
+    }
+
+    const commentsSection =
+        post.querySelector(".comments-section");
+
+    if (!commentsSection) {
+        return;
+    }
+
+    if (commentsSection.style.display === "block") {
+
+        commentsSection.style.display = "none";
+
+    } else {
+
+        commentsSection.style.display = "block";
+
+        const input =
+            commentsSection.querySelector(
+                'input[name="content"]'
+            );
+
+        if (input) {
+            input.focus();
+        }
+    }
+}
+</script>

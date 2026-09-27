@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ user["name"] }} | ConnectHub
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-page">
+
+    <!-- PROFILE CARD -->
+
+    <div class="profile-cover-card">
+
+        <!-- COVER -->
+
+        <div class="profile-cover">
+
+            <div class="cover-content">
+                <h2>Good Ideas</h2>
+                <h3>Connect People</h3>
+                <span>♥</span>
+            </div>
+
+        </div>
+
+
+        <!-- USER INFORMATION -->
+
+        <div class="profile-information">
+
+            <!-- PROFILE PHOTO -->
+
+            <div class="profile-photo-container">
+
+                <div class="large-profile-photo">
+
+                    {% if user["profile_image"] %}
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/' + user['profile_image']
+                            ) }}"
+                            alt="Profile Photo"
+                        >
+
+                    {% else %}
+
+                        👨🏻‍💻
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- USER DETAILS -->
+
+            <div class="profile-user-details">
+
+                <h1>
+                    {{ user["name"] }}
+                </h1>
+
+                <p class="profile-username">
+                    @{{ user["username"] }}
+                </p>
+
+                <p class="profile-bio">
+
+                    {% if user["bio"] %}
+
+                        {{ user["bio"] }}
+
+                    {% else %}
+
+                        No bio added yet.
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- FOLLOW BUTTON -->
+
+            <div class="other-profile-actions">
+
+                {% if user["id"] != session["user_id"] %}
+
+                    {% if is_following %}
+
+                        <form
+                            action="/follow/{{ user['id'] }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="unfollow-button profile-follow-button"
+                            >
+                                ✓ Following
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <form
+                            action="/follow/{{ user['id'] }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="follow-button profile-follow-button"
+                            >
+                                + Follow
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="profile-stats">
+
+            <div class="profile-stat">
+
+                <strong>
+                    {{ post_count }}
+                </strong>
+
+                <span>
+                    Posts
+                </span>
+
+            </div>
+
+
+            <div class="stat-line"></div>
+
+
+            <div class="profile-stat">
+
+                <strong>
+                    {{ follower_count }}
+                </strong>
+
+                <span>
+                    Followers
+                </span>
+
+            </div>
+
+
+            <div class="stat-line"></div>
+
+
+            <div class="profile-stat">
+
+                <strong>
+                    {{ following_count }}
+                </strong>
+
+                <span>
+                    Following
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- POSTS HEADER -->
+
+    <div class="other-profile-heading">
+
+        <h2>
+            📝 {{ user["name"] }}'s Posts
+        </h2>
+
+        <a href="/users">
+            ← Discover People
+        </a>
+
+    </div>
+
+
+    <!-- POSTS -->
+
+    <div class="profile-posts">
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+            <article class="profile-post">
+
+                <div class="profile-post-header">
+
+                    <div class="profile-post-avatar">
+
+                        {% if user["profile_image"] %}
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='images/' + user['profile_image']
+                                ) }}"
+                                alt="Profile Photo"
+                            >
+
+                        {% else %}
+
+                            👨🏻‍💻
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            {{ user["name"] }}
+                        </strong>
+
+                        <span>
+                            @{{ user["username"] }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-post-content">
+
+                    <p>
+                        {{ post["content"] }}
+                    </p>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-profile-posts">
+
+                <div class="empty-post-icon">
+                    📝
+                </div>
+
+                <h2>
+                    No posts yet
+                </h2>
+
+                <p>
+                    {{ user["name"] }} hasn't shared any posts yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

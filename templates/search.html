@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Search | ConnectHub{% endblock %}
+
+{% block content %}
+
+<div class="search-page">
+
+    <div class="search-header">
+
+        <h1>🔍 Search Results</h1>
+
+        {% if query %}
+            <p>
+                Results for "<strong>{{ query }}</strong>"
+            </p>
+        {% else %}
+            <p>
+                Search for users or posts on ConnectHub.
+            </p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- USERS -->
+
+    {% if users %}
+
+        <section class="search-section">
+
+            <h2>👥 People</h2>
+
+            <div class="users-grid">
+
+                {% for person in users %}
+
+                    <div class="user-card">
+
+                        <div class="discover-avatar">
+
+                            {% if person["profile_image"] %}
+
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename='images/' + person['profile_image']
+                                    ) }}"
+                                    alt="Profile Photo"
+                                >
+
+                            {% else %}
+
+                                👨🏻‍💻
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <h2>
+
+                            <a
+                                href="/user/{{ person['id'] }}"
+                                class="discover-user-link"
+                            >
+                                {{ person["name"] }}
+                            </a>
+
+                        </h2>
+
+
+                        <p class="discover-username">
+                            @{{ person["username"] }}
+                        </p>
+
+
+                        <p class="discover-bio">
+
+                            {% if person["bio"] %}
+
+                                {{ person["bio"] }}
+
+                            {% else %}
+
+                                No bio added yet.
+
+                            {% endif %}
+
+                        </p>
+
+                        {% if person["id"] != session["user_id"] %}
+
+    {% if person["id"] in following_ids %}
+
+        <form
+            action="/follow/{{ person['id'] }}"
+            method="POST"
+        >
+            <button
+                type="submit"
+                class="unfollow-button"
+            >
+                ✓ Following
+            </button>
+        </form>
+
+    {% else %}
+
+        <form
+            action="/follow/{{ person['id'] }}"
+            method="POST"
+        >
+            <button
+                type="submit"
+                class="follow-button"
+            >
+                + Follow
+            </button>
+        </form>
+
+    {% endif %}
+
+{% else %}
+
+    <div class="your-profile-label">
+        👤 You
+    </div>
+
+{% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+
+    <!-- POSTS -->
+
+    {% if posts %}
+
+        <section class="search-section">
+
+            <h2>📝 Posts</h2>
+
+            <div class="search-posts">
+
+                {% for post in posts %}
+
+                    <article class="search-post-card">
+
+                        <div class="search-post-header">
+
+                            <div>
+
+                                <strong>
+                                    {{ post["name"] }}
+                                </strong>
+
+                                <span>
+                                    @{{ post["username"] }}
+                                </span>
+
+                            </div>
+
+                            <small>
+                                {{ post["created_at"] }}
+                            </small>
+
+                        </div>
+
+
+                        <div class="search-post-content">
+
+                            <p>
+                                {{ post["content"] }}
+                            </p>
+
+
+                            {% if post["image"] %}
+
+                                <div class="search-post-image">
+
+                                    <a
+                                        href="{{ url_for(
+                                            'static',
+                                            filename='images/' + post['image']
+                                        ) }}"
+                                        target="_blank"
+                                    >
+
+                                        <img
+                                            src="{{ url_for(
+                                                'static',
+                                                filename='images/' + post['image']
+                                            ) }}"
+                                            alt="Post Image"
+                                        >
+
+                                    </a>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <a
+                            href="/#post-{{ post['id'] }}"
+                            class="view-post-button"
+                        >
+                            View Post →
+                        </a>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+
+    <!-- NO RESULTS -->
+
+    {% if query and not users and not posts %}
+
+        <div class="empty-profile-posts">
+
+            <div class="empty-post-icon">
+                🔍
+            </div>
+
+            <h2>No results found</h2>
+
+            <p>
+                We couldn't find any users or posts matching
+                "{{ query }}".
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

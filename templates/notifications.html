@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications | ConnectHub
+{% endblock %}
+
+{% block content %}
+
+<div class="notifications-page">
+
+    <!-- HEADER -->
+
+    <div class="notifications-header">
+
+        <h1>
+            🔔 Notifications
+        </h1>
+
+        <p>
+            See what's happening with your ConnectHub account.
+        </p>
+
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+
+    {% if notifications %}
+
+        <div class="notifications-list">
+
+            {% for notification in notifications %}
+
+            <a
+                href="/user/{{ notification['sender_id'] }}"
+                class="notification-card"
+            >
+
+                <!-- NOTIFICATION ICON -->
+
+                <div class="notification-icon">
+
+                    {% if notification["type"] == "follow" %}
+
+                        👥
+
+                    {% elif notification["type"] == "like" %}
+
+                        ❤️
+
+                    {% elif notification["type"] == "comment" %}
+
+                        💬
+
+                    {% else %}
+
+                        🔔
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- NOTIFICATION CONTENT -->
+
+                <div class="notification-content">
+
+                    <strong>
+                        {{ notification["name"] }}
+                    </strong>
+
+                    <span>
+                        @{{ notification["username"] }}
+                    </span>
+
+                    <p>
+                        {{ notification["message"] }}
+                    </p>
+
+                    <small>
+                        {{ notification["created_at"] }}
+                    </small>
+
+                </div>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- EMPTY NOTIFICATIONS -->
+
+        <div class="empty-notifications">
+
+            <div class="empty-notification-icon">
+                🔔
+            </div>
+
+            <h2>
+                No notifications yet
+            </h2>
+
+            <p>
+                When someone follows, likes or comments
+                on your posts, you'll see it here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

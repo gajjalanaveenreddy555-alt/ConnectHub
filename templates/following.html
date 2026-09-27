@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Following | ConnectHub{% endblock %}
+
+{% block content %}
+
+<div class="users-page">
+
+    <div class="users-header">
+
+        <h1>👥 Following</h1>
+
+        <p>
+            People {{ user["name"] }} is following
+        </p>
+
+    </div>
+
+
+    {% if following %}
+
+        <div class="users-grid">
+
+            {% for person in following %}
+
+                <div class="user-card">
+
+                    <div class="discover-avatar">
+
+                        {% if person["profile_image"] %}
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='images/' + person['profile_image']
+                                ) }}"
+                                alt="Profile Photo"
+                            >
+
+                        {% else %}
+
+                            👨🏻‍💻
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h2>
+
+                        <a
+                            href="/user/{{ person['id'] }}"
+                            class="discover-user-link"
+                        >
+                            {{ person["name"] }}
+                        </a>
+
+                    </h2>
+
+
+                    <p class="discover-username">
+                        @{{ person["username"] }}
+                    </p>
+
+
+                    <p class="discover-bio">
+
+                        {% if person["bio"] %}
+
+                            {{ person["bio"] }}
+
+                        {% else %}
+
+                            No bio added yet.
+
+                        {% endif %}
+
+                    </p>
+
+
+                    {% if person["id"] != session["user_id"] %}
+
+                        {% if person["id"] in following_ids %}
+
+                            <form
+                                action="/follow/{{ person['id'] }}"
+                                method="POST"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="unfollow-button"
+                                >
+                                    ✓ Following
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <form
+                                action="/follow/{{ person['id'] }}"
+                                method="POST"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="follow-button"
+                                >
+                                    + Follow
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <div class="your-profile-label">
+                            👤 You
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-profile-posts">
+
+            <div class="empty-post-icon">
+                👥
+            </div>
+
+            <h2>Not following anyone yet</h2>
+
+            <p>
+                {{ user["name"] }} isn't following anyone yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

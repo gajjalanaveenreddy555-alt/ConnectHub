@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+Saved Posts | ConnectHub
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-page">
+
+    <div class="feed-heading">
+        <h1>🔖 Saved Posts</h1>
+        <p>Posts you saved for later.</p>
+    </div>
+
+    {% if posts %}
+
+        {% for post in posts %}
+
+        <article class="profile-post">
+
+            <div class="profile-post-header">
+
+                <div class="profile-post-avatar">
+                    👨🏻‍💻
+                </div>
+
+                <div>
+                    <strong>{{ post["name"] }}</strong>
+                    <span>@{{ post["username"] }}</span>
+                </div>
+
+            </div>
+
+            <div class="profile-post-content">
+                <p>{{ post["content"] }}</p>
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-profile-posts">
+
+            <div class="empty-post-icon">
+                🔖
+            </div>
+
+            <h2>No saved posts</h2>
+
+            <p>
+                Save posts from your feed and they will appear here.
+            </p>
+
+            <a
+                href="/"
+                class="create-first-post-btn"
+            >
+                Explore Posts
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile | ConnectHub
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-page">
+
+    <!-- PROFILE CARD -->
+    <div class="profile-cover-card">
+
+        <!-- COVER -->
+        <div class="profile-cover">
+
+            <div class="cover-content">
+                <h2>Good Ideas</h2>
+                <h3>Connect People</h3>
+                <span>♥</span>
+            </div>
+
+            <button class="change-cover-btn">
+                📷 Change Cover
+            </button>
+
+        </div>
+
+
+        <!-- PROFILE INFORMATION -->
+        <div class="profile-information">
+
+            <!-- PROFILE PHOTO -->
+            <div class="profile-photo-container">
+
+                <div class="large-profile-photo">
+
+                    {% if user["profile_image"] %}
+
+                        <img
+                            src="{{ url_for('static', filename='images/' + user['profile_image']) }}"
+                            alt="Profile Photo"
+                        >
+
+                    {% else %}
+
+                        👨🏻‍💻
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CAMERA FORM -->
+                <form
+                    action="/upload-profile-photo"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    id="profile-photo-form"
+                >
+
+                    <input
+                        type="file"
+                        name="profile_image"
+                        id="profile-image-input"
+                        accept="image/*"
+                        hidden
+                    >
+
+                    <button
+                        type="button"
+                        class="profile-camera-btn"
+                        onclick="document.getElementById('profile-image-input').click()"
+                    >
+                        📷
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- USER DETAILS -->
+            <div class="profile-user-details">
+
+                <h1>
+                    {{ user["name"] }}
+                </h1>
+
+                <p class="profile-username">
+                    @{{ user["username"] }}
+                </p>
+
+                <p class="profile-bio">
+
+                    {% if user["bio"] %}
+                        {{ user["bio"] }}
+                    {% else %}
+                        No bio added yet.
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- EDIT BUTTON -->
+            <button
+                type="button"
+                class="edit-profile-btn"
+                onclick="openEditProfile()"
+            >
+                ✏️ Edit Profile
+            </button>
+
+        </div>
+
+
+       <!-- STATS -->
+<div class="profile-stats">
+
+    <div class="profile-stat">
+
+        <strong>
+            {{ post_count }}
+        </strong>
+
+        <span>
+            Posts
+        </span>
+
+    </div>
+
+
+    <div class="stat-line"></div>
+
+
+    <a href="/followers/{{ user['id'] }}" class="profile-stat stat-link">
+
+        <strong>
+            {{ follower_count }}
+        </strong>
+
+        <span>
+            Followers
+        </span>
+
+    </a>
+
+
+    <div class="stat-line"></div>
+
+
+    <a href="/following/{{ user['id'] }}" class="profile-stat stat-link">
+
+        <strong>
+            {{ following_count }}
+        </strong>
+
+        <span>
+            Following
+        </span>
+
+    </a>
+
+</div>
+
+
+    <!-- PROFILE TABS -->
+    <div class="profile-tabs">
+
+        <a
+            href="/profile"
+            class="profile-tab active"
+        >
+            <span>▦</span>
+            My Posts
+        </a>
+
+
+        <a
+            href="/liked-posts"
+            class="profile-tab"
+        >
+            <span>♡</span>
+            Liked Posts
+        </a>
+
+
+        <a
+            href="/saved-posts"
+            class="profile-tab"
+        >
+            <span>🔖</span>
+            Saved Posts
+        </a>
+
+    </div>
+
+
+    <!-- POSTS -->
+    <div class="profile-posts">
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+            <article class="profile-post">
+
+                <div class="profile-post-header">
+
+                    <div class="profile-post-avatar">
+
+                        {% if user["profile_image"] %}
+
+                            <img
+                                src="{{ url_for('static', filename='images/' + user['profile_image']) }}"
+                            >
+
+                        {% else %}
+
+                            👨🏻‍💻
+
+                        {% endif %}
+
+                    </div>
+
+                                        <div>
+
+                        <strong>
+                            {{ user["name"] }}
+                        </strong>
+
+                        <span>
+                            @{{ user["username"] }}
+                        </span>
+
+                    </div>
+
+                    <!-- DELETE POST -->
+
+                    <form
+                        action="/delete-post/{{ post['id'] }}"
+                        method="POST"
+                        onsubmit="return confirm('Are you sure you want to delete this post?');"
+                    >
+                        <button
+                            type="submit"
+                            class="delete-post-button"
+                            title="Delete Post"
+                        >
+                            🗑️
+                        </button>
+                    </form>
+
+                </div>
+
+                <div class="profile-post-content">
+
+    <p>
+        {{ post["content"] }}
+    </p>
+
+    {% if post["image"] %}
+
+        <div class="profile-post-image">
+
+            <a
+                href="{{ url_for('static', filename='images/' + post['image']) }}"
+                target="_blank"
+            >
+                <img
+                    src="{{ url_for('static', filename='images/' + post['image']) }}"
+                    alt="Post Image"
+                >
+            </a>
+
+        </div>
+
+    {% endif %}
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-profile-posts">
+
+                <div class="empty-post-icon">
+                    📝
+                </div>
+
+                <h2>
+                    No posts yet
+                </h2>
+
+                <p>
+                    Share your thoughts, ideas and moments
+                    with the ConnectHub community.
+                </p>
+
+                <a
+                    href="/create-post"
+                    class="create-first-post-btn"
+                >
+                    ⊕ Create Your First Post
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- EDIT PROFILE MODAL -->
+
+<div
+    id="edit-profile-modal"
+    class="edit-profile-modal"
+>
+
+    <div class="edit-profile-card">
+
+        <button
+            class="close-edit-profile"
+            onclick="closeEditProfile()"
+        >
+            ×
+        </button>
+
+        <h2>
+            Edit Profile
+        </h2>
+
+        <p>
+            Update your profile information
+        </p>
+
+
+        <form
+            action="/edit-profile"
+            method="POST"
+        >
+
+            <label>
+                Bio
+            </label>
+
+            <textarea
+                name="bio"
+                placeholder="Tell people something about yourself..."
+                maxlength="150"
+            >{{ user["bio"] or "" }}</textarea>
+
+
+            <button
+                type="submit"
+                class="save-profile-btn"
+            >
+                💾 Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const profileImageInput =
+    document.getElementById("profile-image-input");
+
+if (profileImageInput) {
+
+    profileImageInput.addEventListener(
+        "change",
+        function() {
+
+            if (this.files.length > 0) {
+
+                document
+                    .getElementById("profile-photo-form")
+                    .submit();
+
+            }
+
+        }
+    );
+
+}
+
+
+function openEditProfile() {
+
+    document
+        .getElementById("edit-profile-modal")
+        .classList.add("show");
+
+}
+
+
+function closeEditProfile() {
+
+    document
+        .getElementById("edit-profile-modal")
+        .classList.remove("show");
+
+}
+
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        const modal =
+            document.getElementById("edit-profile-modal");
+
+        if (event.target === modal) {
+
+            closeEditProfile();
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}
